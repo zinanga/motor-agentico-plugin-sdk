@@ -55,8 +55,19 @@ Motor
 - **Cargador de plugins:** lo único que se mete en el Motor. Mínimo y aditivo.
   Sin él no hay plugins (igual que WordPress necesita su core para cargar plugins).
 - **El puente (host):** el "mayordomo" que escucha a los plugins-artefacto, llama a
-  Claude por ellos (con el setup del Motor) y les devuelve la respuesta. Puede ser
-  **un plugin de tipo herramienta** con un gancho `activate()` (pendiente en el SDK).
+  Claude por ellos (con el setup del Motor) y les devuelve la respuesta. Es
+  **un plugin de tipo herramienta** con un gancho `activate()`.
+
+### Las 3 capas (qué es esencia y qué es vehículo)
+
+```
+Capa 1 — ESTÁNDAR   (manifiesto + validación)   ← cerebro. Independiente del vehículo.
+Capa 2 — CARGADOR   (runtime en el Motor)        ← músculo. Imprescindible. Lo que falta.
+Capa 3 — AUTORÍA    (crear/instalar plugins)     ← puerta. Puede ser MCP (hecho) o skill (lite).
+```
+
+Capas 1 y 2 son el valor real. La Capa 3 es solo la puerta: elegimos **MCP** (ya hecho);
+una skill habría sido la versión *lite* del mismo trabajo, así que no se añade (duplicaría).
 
 ---
 
@@ -73,6 +84,7 @@ Motor
 | Dos contratos de datos: `neurona-endpoint` y `local-file` | Casos reales: Porra (remoto) y Radar (local privado). |
 | `embed: iframe` + `capabilities` + **puente** | Los artefactos de Claude llaman a Claude desde el cliente; el Motor les presta esa capacidad sin API keys. |
 | **Bun** para todo; **pnpm** solo para login (npm no) | Preferencia del usuario. Publicar = `bun publish`. |
+| **El MCP es la puerta de autoría; NO se añade una skill** | Una skill sería una versión *lite* del mismo trabajo de autoría (duplicaría). El MCP ya está hecho y funciona. Lo que falta no es otra forma de *crear* plugins, sino el **cargador** para *ejecutarlos/gestionarlos*. |
 
 ---
 
