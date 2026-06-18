@@ -117,6 +117,19 @@ tengan modificado?
   - **(a) Oficial:** que Imperio lo meta en el core del Motor → lo reciben todos (modelo WordPress pleno). El usuario es socio → proponerlo.
   - **(b) Add-on:** empaquetar el cargador como instalable (estilo el `install.sh` del Radar) → cada uno lo instala en su Motor, sin depender de Imperio.
 
+### Estrategia elegida: BETA → MERGE (graduación, estilo WordPress)
+
+```
+FASE 1 — BETA (opt-in)            FASE 2 — OFICIAL (si Imperio aprueba)
+cargador + puente como add-on  →  Imperio lo mergea al core del Motor
+cada uno lo instala si quiere     todos lo traen de serie
+```
+
+- **Mismo código en ambas fases.** "Mergear" = mover el cargador dentro del Motor oficial; no se rehace nada.
+- Empezamos por el **camino (b)** (add-on, no dependemos de nadie) como **beta**.
+- Si convence a la comunidad, se propone a Imperio el **camino (a)** (merge al core).
+- Reversible: si no convence, ningún Motor oficial quedó tocado.
+
 ---
 
 ## 8. Próximos pasos sugeridos
