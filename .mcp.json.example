@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "motor-plugins": {
+      "command": "bun",
+      "args": ["run", "./mcp/motor-plugin-mcp/src/index.ts"],
+      "description": "Arrancador de plugins del Motor Agéntico (scaffold / validate / list). Independiente de Forge."
+    }
+  }
+}

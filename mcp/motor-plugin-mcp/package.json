@@ -1,0 +1,23 @@
+{
+  "name": "@motor-agentico/plugin-mcp",
+  "version": "0.1.0",
+  "description": "MCP arrancador (independiente de Forge): scaffold, valida y lista plugins del Motor Agéntico conforme al estándar.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "motor-plugin-mcp": "./src/index.ts"
+  },
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@motor-agentico/plugin-sdk": "workspace:*",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  }
+}

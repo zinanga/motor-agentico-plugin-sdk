@@ -1,0 +1,19 @@
+{
+  "name": "motor-agentico-sdk",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SDK + estándar + MCP para la Zona de Plugins del Motor Agéntico. Funciona con o sin Forge.",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "mcp/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "mcp": "bun run mcp/motor-plugin-mcp/src/index.ts",
+    "typecheck": "bun run --filter '*' typecheck",
+    "typecheck:sdk": "cd packages/plugin-sdk && bun run typecheck",
+    "typecheck:mcp": "cd mcp/motor-plugin-mcp && bun run typecheck"
+  },
+  "license": "MIT"
+}

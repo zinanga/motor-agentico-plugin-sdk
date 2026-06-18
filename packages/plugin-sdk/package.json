@@ -1,0 +1,35 @@
+{
+  "name": "@motor-agentico/plugin-sdk",
+  "version": "0.1.0",
+  "description": "SDK estándar para construir plugins del Motor Agéntico (manifiesto, registry, hooks).",
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./react": {
+      "types": "./src/react.tsx",
+      "import": "./src/react.tsx"
+    }
+  },
+  "main": "./src/index.ts",
+  "files": ["src", "README.md"],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": ">=5",
+    "react": ">=18",
+    "zod": ">=3"
+  },
+  "peerDependenciesMeta": {
+    "react": { "optional": true },
+    "@tanstack/react-query": { "optional": true }
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
+  },
+  "keywords": ["motor-agentico", "plugin", "sdk", "forge"]
+}

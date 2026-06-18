@@ -1,0 +1,31 @@
+{
+  "id": "personalizador",
+  "name": "Personalizador",
+  "version": "0.1.0",
+  "description": "Skins y temas del panel del Motor — estilo Warp/IDE, editable en vivo.",
+  "author": "motor-agentico",
+  "icon": "Palette",
+  "type": "theme",
+  "surfaces": {
+    "sidebar": { "label": "Personalizar", "icon": "Palette", "order": 10 },
+    "route": { "path": "/plugins/personalizador" },
+    "settingsPanel": true
+  },
+  "config": [
+    { "key": "accent", "label": "Color de acento", "type": "color", "default": "#2dd4bf" },
+    { "key": "font", "label": "Tipografía", "type": "select", "default": "system", "options": [
+      { "label": "Sistema", "value": "system" },
+      { "label": "Mono", "value": "mono" },
+      { "label": "Serif", "value": "serif" }
+    ]},
+    { "key": "density", "label": "Densidad", "type": "select", "default": "comfortable", "options": [
+      { "label": "Cómoda", "value": "comfortable" },
+      { "label": "Compacta", "value": "compact" }
+    ]},
+    { "key": "radius", "label": "Redondeo (px)", "type": "number", "default": 12 }
+  ],
+  "permissions": {
+    "storageKeys": ["accent", "font", "density", "radius"]
+  },
+  "contractVersion": "1.0"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "@motor-plugin/personalizador",
+  "version": "0.1.0",
+  "description": "Skins y temas del panel del Motor — plugin de ejemplo (type: theme).",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@motor-agentico/plugin-sdk": "workspace:*"
+  }
+}

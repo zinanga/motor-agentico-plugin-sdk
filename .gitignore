@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+.env*.local
+
+# Config local de Claude Code (personal, no compartir)
+.claude/settings.local.json
