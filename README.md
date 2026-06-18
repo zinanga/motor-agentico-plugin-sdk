@@ -19,8 +19,9 @@ registro, gestor on/off, y un MCP que scaffolda plugins nuevos en segundos.
 |---------|--------|
 | `spec/PLUGIN_SPEC.md` | **El estándar.** Reglas de la zona, manifiesto, contrato de datos, ciclo de vida. |
 | `packages/plugin-sdk/` | SDK: esquema Zod del manifiesto, `createPlugin()`, registry (localStorage), hooks React (`usePlugin`, `usePluginData`, `useInstalledPlugins`). |
-| `mcp/motor-plugin-mcp/` | **MCP arrancador** (independiente de Forge): `scaffold_plugin`, `validate_plugin`, `list_plugins`, `get_plugin_spec`. |
+| `mcp/motor-plugin-mcp/` | **MCP arrancador** (independiente de Forge): `scaffold_plugin`, `validate_plugin`, `list_plugins`, `get_plugin_spec`, `import_artifact`, `import_zip`. |
 | `examples/personalizador/` | Plugin de ejemplo: **skins/temas del panel** (estilo Warp/IDE), editable en vivo. |
+| `examples/puente-claude/` | **El puente** (`type: tool`): presta Claude del Motor a los plugins-artefacto vía `activate()`. |
 
 ---
 

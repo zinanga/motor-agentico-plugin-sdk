@@ -6,7 +6,7 @@
  *   - instalado / activo / config gateados por localStorage
  *   - todas las claves bajo el namespace motor-plugin:{id}:*
  */
-import type { PluginDefinition } from "./createPlugin";
+import type { Deactivate, PluginDefinition, PluginHost } from "./createPlugin";
 import type { PluginManifest } from "./manifest";
 
 const NS = "motor-plugin";
@@ -128,6 +128,41 @@ function manifestDefaults(m?: PluginManifest): Record<string, unknown> {
     if (f.default !== undefined) out[f.key] = f.default;
   }
   return out;
+}
+
+// --- activación de plugins de fondo (gancho activate) ------------------------
+const ACTIVE = new Map<string, Deactivate>();
+
+/**
+ * Activa un plugin que tenga gancho `activate()`, pasándole el host del Motor.
+ * Idempotente: no reactiva uno ya activo. Lo llama el cargador del Motor.
+ */
+export function activatePlugin(id: string, host: PluginHost): void {
+  if (ACTIVE.has(id)) return;
+  const def = REGISTRY.get(id);
+  if (!def?.activate || !isActive(id)) return;
+  const cleanup = def.activate({ id, config: getConfig(id), host });
+  ACTIVE.set(id, typeof cleanup === "function" ? cleanup : () => {});
+}
+
+/** Desactiva un plugin de fondo (ejecuta su limpieza). */
+export function deactivatePlugin(id: string): void {
+  const cleanup = ACTIVE.get(id);
+  if (cleanup) {
+    cleanup();
+    ACTIVE.delete(id);
+  }
+}
+
+export function isPluginActivated(id: string): boolean {
+  return ACTIVE.has(id);
+}
+
+/** Activa todos los plugins activos con gancho. Llamar al arrancar el Motor. */
+export function activateEnabled(host: PluginHost): void {
+  for (const p of allPlugins()) {
+    if (isActive(p.manifest.id)) activatePlugin(p.manifest.id, host);
+  }
 }
 
 /** Construye la URL del endpoint neurona para un plugin de datos remoto. */

@@ -137,15 +137,8 @@ export const PluginManifest = z
         message: `route.path debe empezar por /plugins/${m.id}`,
       });
     }
-    // Regla: un plugin con capacidades del host debe montarse en iframe
-    // (el puente postMessage solo aplica a bundles aislados).
-    if ((m.permissions?.capabilities?.length ?? 0) > 0 && m.embed?.kind !== "iframe") {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["embed", "kind"],
-        message: 'permissions.capabilities requiere embed.kind "iframe" (puente del host)',
-      });
-    }
+    // (Las capacidades del host valen para cualquier plugin: los iframe las
+    // reciben por el puente postMessage; los nativos/tool, por ctx.host.)
     // Regla: neurona-endpoint exige un campo "token" en config
     if (m.data?.kind === "neurona-endpoint") {
       const hasToken = (m.config ?? []).some((c) => c.key === "token");

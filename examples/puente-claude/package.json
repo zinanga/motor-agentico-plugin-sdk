@@ -1,0 +1,10 @@
+{
+  "name": "@motor-plugin/puente-claude",
+  "version": "0.1.0",
+  "description": "El puente: presta Claude del Motor a los plugins-artefacto (type: tool, gancho activate).",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "motor-agentico-plugin-sdk": "workspace:*"
+  }
+}

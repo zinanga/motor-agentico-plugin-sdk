@@ -191,8 +191,24 @@ iframe del plugin   ──postMessage({__motorBridge})──▶   Host de plugin
   artefacto corre **sin tocar su código** y **sin que el usuario gestione API keys**.
 - Aislamiento + permisos explícitos: el iframe solo recibe lo que declaró.
 
-> Regla: `permissions.capabilities` exige `embed.kind: "iframe"` (el puente solo
-> aplica a bundles aislados).
+### El "host" del puente, como plugin de fondo (`activate()`)
+
+El otro lado del puente (el "mayordomo" que recibe los `postMessage` y llama a Claude)
+es **un plugin más**, de `type: "tool"`, que usa el gancho **`activate()`** del SDK:
+
+```ts
+export function activate(ctx) {
+  const onMsg = async (e) => { /* … resuelve con ctx.host.claude.complete(...) … */ };
+  window.addEventListener("message", onMsg);
+  return () => window.removeEventListener("message", onMsg); // limpieza al desactivar
+}
+```
+
+- `activate(ctx)` se ejecuta en la ventana principal del Motor cuando el plugin se
+  activa (estilo *hook* de WordPress). Puede devolver una función de limpieza.
+- `ctx.host` trae las capacidades que el Motor presta (`host.claude.complete`,
+  `host.search`). **El cargador del Motor las inyecta** llamando a `activateEnabled(host)`.
+- Ejemplo completo: `examples/puente-claude`.
 
 ---
 
@@ -235,8 +251,10 @@ descubrir → instalar → configurar → activar ⇄ pausar → quitar
 - Toda `storageKey` declarada se usa namespaced.
 - Todo dominio de red usado está en `permissions.network`.
 - Si `data.kind === "neurona-endpoint"`, debe existir un `config` con `token` (y normalmente `apiUrl`).
-- Si `permissions.capabilities` tiene entradas, `embed.kind` debe ser `"iframe"`.
 - `surfaces.route.path` debe empezar por `/plugins/{id}`.
+
+> Las `permissions.capabilities` valen para cualquier plugin: los **iframe** las
+> reciben por el puente `postMessage`; los **nativos/tool** (como el puente), por `ctx.host`.
 
 ---
 

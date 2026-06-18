@@ -94,12 +94,12 @@ Patrón dominante: **artefactos que llaman a Claude desde el cliente** → de ah
 - Estándar v1 cerrado.
 - SDK + MCP construidos, compilan y probados (validación, scaffold, import_zip, import_artifact).
 - Repo público MIT + publicado en npm.
+- **Gancho `activate()`** en el SDK + funciones `activatePlugin`/`deactivatePlugin`/`activateEnabled`. *No toca el Motor.*
+- **El puente como plugin** (`examples/puente-claude`, `type: tool`) — el mayordomo, listo a falta del host del Motor.
 
 **Pendiente ⏳**
-- Gancho `activate()` en el SDK (para plugins de fondo como el puente). *No toca el Motor.*
-- **Cargador de plugins** en el Motor (mínimo, aditivo). *Toca el Motor una vez → hacer `git init` de seguridad antes (el Motor no está bajo git).*
+- **Cargador de plugins** en el Motor (mínimo, aditivo): registrar plugins, montar ruta dinámica, y llamar a `activateEnabled(host)` con un `host` que conecte `host.claude.complete` al Claude real del Motor. *Toca el Motor una vez → hacer `git init` de seguridad antes (el Motor no está bajo git).*
 - **Gestor** en el Motor (instalar / on-off / quitar).
-- **El puente** como plugin (el mayordomo que presta Claude).
 - Conversión real del Radar a plugin gestionado (validar el importador con el caso completo).
 
 ---

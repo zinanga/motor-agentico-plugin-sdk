@@ -1,0 +1,17 @@
+{
+  "id": "puente-claude",
+  "name": "Puente de Claude",
+  "version": "0.1.0",
+  "description": "Presta Claude (y búsqueda web) del Motor a los plugins-artefacto vía postMessage. El mayordomo.",
+  "author": "motor-agentico",
+  "icon": "Cable",
+  "type": "tool",
+  "source": "native",
+  "surfaces": {
+    "settingsPanel": true
+  },
+  "permissions": {
+    "capabilities": ["claude.complete", "web.search"]
+  },
+  "contractVersion": "1.0"
+}
