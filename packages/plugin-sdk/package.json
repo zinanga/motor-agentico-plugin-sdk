@@ -4,6 +4,13 @@
   "description": "SDK estándar para construir plugins del Motor Agéntico (manifiesto, registry, hooks).",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zinanga/motor-agentico-plugin-sdk.git",
+    "directory": "packages/plugin-sdk"
+  },
+  "homepage": "https://github.com/zinanga/motor-agentico-plugin-sdk#readme",
+  "publishConfig": { "access": "public" },
   "exports": {
     ".": {
       "types": "./src/index.ts",

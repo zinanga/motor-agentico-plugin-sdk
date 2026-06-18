@@ -4,6 +4,14 @@
   "description": "MCP arrancador (independiente de Forge): scaffold, valida y lista plugins del Motor Agéntico conforme al estándar.",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zinanga/motor-agentico-plugin-sdk.git",
+    "directory": "mcp/motor-plugin-mcp"
+  },
+  "homepage": "https://github.com/zinanga/motor-agentico-plugin-sdk#readme",
+  "publishConfig": { "access": "public" },
+  "files": ["src", "README.md"],
   "bin": {
     "motor-plugin-mcp": "./src/index.ts"
   },
