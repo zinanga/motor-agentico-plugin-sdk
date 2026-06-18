@@ -40,7 +40,17 @@ const REGISTRY = new Map<string, PluginDefinition>();
 
 /** Registra uno o varios plugins (llamar al arrancar el Motor). */
 export function registerPlugins(...plugins: PluginDefinition[]): void {
-  for (const p of plugins) REGISTRY.set(p.manifest.id, p);
+  for (const p of plugins) {
+    const id = p?.manifest?.id;
+    if (!id) {
+      console.warn("[plugin-sdk] registerPlugins: plugin sin manifest.id, ignorado");
+      continue;
+    }
+    if (REGISTRY.has(id)) {
+      console.warn(`[plugin-sdk] registerPlugins: id duplicado "${id}", se reemplaza el anterior`);
+    }
+    REGISTRY.set(id, p);
+  }
 }
 
 export function getPlugin(id: string): PluginDefinition | undefined {
@@ -141,15 +151,25 @@ export function activatePlugin(id: string, host: PluginHost): void {
   if (ACTIVE.has(id)) return;
   const def = REGISTRY.get(id);
   if (!def?.activate || !isActive(id)) return;
-  const cleanup = def.activate({ id, config: getConfig(id), host });
-  ACTIVE.set(id, typeof cleanup === "function" ? cleanup : () => {});
+  try {
+    const cleanup = def.activate({ id, config: getConfig(id), host });
+    ACTIVE.set(id, typeof cleanup === "function" ? cleanup : () => {});
+  } catch (err) {
+    // Un plugin que peta al activarse NO debe tumbar a los demás.
+    console.error(`[plugin-sdk] activate() falló en "${id}":`, err);
+  }
 }
 
 /** Desactiva un plugin de fondo (ejecuta su limpieza). */
 export function deactivatePlugin(id: string): void {
   const cleanup = ACTIVE.get(id);
-  if (cleanup) {
+  if (!cleanup) return;
+  try {
     cleanup();
+  } catch (err) {
+    console.error(`[plugin-sdk] limpieza de "${id}" falló:`, err);
+  } finally {
+    // Pase lo que pase, lo damos por desactivado.
     ACTIVE.delete(id);
   }
 }

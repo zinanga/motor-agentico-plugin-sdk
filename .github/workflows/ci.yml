@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install
+        run: bun install
+      - name: Typecheck SDK
+        run: cd packages/plugin-sdk && bun run typecheck
+      - name: Test SDK
+        run: cd packages/plugin-sdk && bun test
+      - name: Typecheck MCP
+        run: cd mcp/motor-plugin-mcp && bun run typecheck

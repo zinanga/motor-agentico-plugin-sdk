@@ -24,7 +24,8 @@
   "main": "./src/index.ts",
   "files": ["src", "README.md"],
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
   },
   "peerDependencies": {
     "@tanstack/react-query": ">=5",

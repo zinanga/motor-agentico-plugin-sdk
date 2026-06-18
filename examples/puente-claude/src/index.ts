@@ -19,17 +19,38 @@ interface BridgeRequest {
   params?: Record<string, unknown>;
 }
 
+const KNOWN_METHODS = new Set(["claude.complete", "web.search"]);
+
 export function activate(ctx: PluginContext): Deactivate {
   async function onMessage(event: MessageEvent) {
     const data = event.data as BridgeRequest;
-    if (!data?.__motorBridge || !data.method || !data.reqId) return;
+    // Validación estricta: solo mensajes bien formados de nuestro protocolo.
+    if (
+      !data ||
+      data.__motorBridge !== true ||
+      typeof data.reqId !== "string" ||
+      typeof data.method !== "string"
+    ) {
+      return;
+    }
 
     const source = event.source as Window | null;
-    const reply = (extra: Record<string, unknown>) =>
-      source?.postMessage(
-        { __motorBridge: true, reqId: data.reqId, ...extra },
-        "*",
-      );
+    const reply = (extra: Record<string, unknown>) => {
+      // El iframe pudo desmontarse: responder nunca debe tumbar el puente.
+      try {
+        source?.postMessage(
+          { __motorBridge: true, reqId: data.reqId, ...extra },
+          "*",
+        );
+      } catch {
+        /* destinatario ya no disponible */
+      }
+    };
+
+    if (!KNOWN_METHODS.has(data.method)) {
+      reply({ error: `método no soportado: ${data.method}` });
+      return;
+    }
 
     try {
       if (data.method === "claude.complete") {
@@ -41,8 +62,6 @@ export function activate(ctx: PluginContext): Deactivate {
         if (!ctx.host.search) throw new Error("El Motor no expone búsqueda web");
         const result = await ctx.host.search(String(data.params?.query ?? ""));
         reply({ result });
-      } else {
-        reply({ error: `método no soportado: ${data.method}` });
       }
     } catch (err) {
       reply({ error: (err as Error).message });
