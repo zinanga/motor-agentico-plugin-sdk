@@ -67,7 +67,7 @@ de notas"* → te genera la carpeta conforme al estándar.
 3. Regístralo en el Motor:
 
    ```ts
-   import { registerPlugins } from "@motor-agentico/plugin-sdk";
+   import { registerPlugins } from "motor-agentico-plugin-sdk";
    import personalizador from "../examples/personalizador/plugin.manifest";
    registerPlugins(personalizador);
    ```

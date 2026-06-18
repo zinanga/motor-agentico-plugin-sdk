@@ -5,7 +5,7 @@
  * plugin.manifest.ts lo envuelve con createPlugin(). Así el MCP puede
  * validar/listar sin ejecutar TypeScript.
  */
-import type { PluginManifest } from "@motor-agentico/plugin-sdk";
+import type { PluginManifest } from "motor-agentico-plugin-sdk";
 
 export function manifestJson(m: PluginManifest): string {
   return JSON.stringify(m, null, 2) + "\n";
@@ -14,7 +14,7 @@ export function manifestJson(m: PluginManifest): string {
 export function manifestTs(m: PluginManifest): string {
   const isTheme = m.type === "theme";
   const isTool = m.type === "tool";
-  return `import { createPlugin } from "@motor-agentico/plugin-sdk";
+  return `import { createPlugin } from "motor-agentico-plugin-sdk";
 import manifest from "./plugin.json";
 ${isTool ? "" : `import { Panel } from "./src/index";\n`}
 export default createPlugin(manifest as Parameters<typeof createPlugin>[0], {
@@ -43,7 +43,7 @@ export function Panel() {
   return `/**
  * ${m.name} — panel principal del plugin (type: ${m.type}).
  */
-${usesData ? `import { usePluginData } from "@motor-agentico/plugin-sdk/react";\n` : ""}
+${usesData ? `import { usePluginData } from "motor-agentico-plugin-sdk/react";\n` : ""}
 export function Panel() {
 ${usesData ? `  const { data, isLoading, error } = usePluginData("${m.id}");\n\n  if (isLoading) return <div className="p-6">Cargando…</div>;\n  if (error) return <div className="p-6 text-destructive">{error.message}</div>;\n` : ""}
   return (
@@ -66,7 +66,7 @@ export function pkgJson(m: PluginManifest): string {
         type: "module",
         private: true,
         dependencies: {
-          "@motor-agentico/plugin-sdk": "workspace:*",
+          "motor-agentico-plugin-sdk": "workspace:*",
         },
       },
       null,
@@ -92,7 +92,7 @@ Generado con el MCP \`forge-motor-mcp\` conforme a \`spec/PLUGIN_SPEC.md\` (cont
 
 \`\`\`ts
 // plugins/registry.ts del Motor
-import { registerPlugins } from "@motor-agentico/plugin-sdk";
+import { registerPlugins } from "motor-agentico-plugin-sdk";
 import ${camel(m.id)} from "./${m.id}/plugin.manifest";
 
 registerPlugins(${camel(m.id)});
@@ -108,7 +108,7 @@ function camel(id: string): string {
 
 /** manifest.ts para plugin iframe: no hay Panel React, el Motor monta el bundle. */
 export function iframeManifestTs(): string {
-  return `import { createPlugin } from "@motor-agentico/plugin-sdk";
+  return `import { createPlugin } from "motor-agentico-plugin-sdk";
 import manifest from "./plugin.json";
 
 // Plugin iframe: el Motor monta web/{embed.entry} en un <iframe sandbox>

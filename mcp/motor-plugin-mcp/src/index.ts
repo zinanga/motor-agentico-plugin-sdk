@@ -22,7 +22,7 @@ import {
   CONTRACT_VERSION,
   validateManifest,
   type PluginManifest,
-} from "@motor-agentico/plugin-sdk";
+} from "motor-agentico-plugin-sdk";
 import {
   artifactIndexHtml,
   artifactReadme,

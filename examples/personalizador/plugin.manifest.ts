@@ -1,4 +1,4 @@
-import { createPlugin } from "@motor-agentico/plugin-sdk";
+import { createPlugin } from "motor-agentico-plugin-sdk";
 import manifest from "./plugin.json";
 import { Panel, applyTheme } from "./src/index";
 

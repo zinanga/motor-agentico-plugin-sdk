@@ -6,7 +6,7 @@
  * dentro del Motor puedes sustituir los inputs por componentes de la app.
  */
 import { useState } from "react";
-import { usePlugin } from "@motor-agentico/plugin-sdk/react";
+import { usePlugin } from "motor-agentico-plugin-sdk/react";
 import { applyTheme, type ThemeConfig } from "./theme";
 
 const PRESETS: { name: string; cfg: ThemeConfig }[] = [

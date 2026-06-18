@@ -1,4 +1,4 @@
-# @motor-agentico/plugin-sdk
+# motor-agentico-plugin-sdk
 
 SDK estándar para construir **plugins del Motor Agéntico**: esquema del manifiesto
 (Zod), `createPlugin()`, registry con estado en `localStorage` y hooks de React
@@ -10,13 +10,13 @@ Funciona **con o sin Forge**. Parte del repo
 ## Instalación
 
 ```bash
-bun add @motor-agentico/plugin-sdk
+bun add motor-agentico-plugin-sdk
 ```
 
 ## Uso
 
 ```ts
-import { createPlugin } from "@motor-agentico/plugin-sdk";
+import { createPlugin } from "motor-agentico-plugin-sdk";
 
 export default createPlugin({
   id: "mi-plugin",
@@ -33,7 +33,7 @@ export default createPlugin({
 Hooks de React:
 
 ```ts
-import { usePlugin, usePluginData } from "@motor-agentico/plugin-sdk/react";
+import { usePlugin, usePluginData } from "motor-agentico-plugin-sdk/react";
 ```
 
 El contrato completo está en

@@ -1,4 +1,4 @@
-# @motor-agentico/plugin-mcp
+# motor-agentico-plugin-mcp
 
 Servidor **MCP arrancador** de plugins del Motor Agéntico. Independiente de Forge:
 corre en cualquier MCP host (Claude Code, etc.). Parte del repo
@@ -24,7 +24,7 @@ corre en cualquier MCP host (Claude Code, etc.). Parte del repo
   "mcpServers": {
     "motor-plugins": {
       "command": "bunx",
-      "args": ["@motor-agentico/plugin-mcp"]
+      "args": ["motor-agentico-plugin-mcp"]
     }
   }
 }

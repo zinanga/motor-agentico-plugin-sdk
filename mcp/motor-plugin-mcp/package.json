@@ -1,5 +1,5 @@
 {
-  "name": "@motor-agentico/plugin-mcp",
+  "name": "motor-agentico-plugin-mcp",
   "version": "0.1.0",
   "description": "MCP arrancador (independiente de Forge): scaffold, valida y lista plugins del Motor Agéntico conforme al estándar.",
   "type": "module",
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "@motor-agentico/plugin-sdk": "workspace:*",
+    "motor-agentico-plugin-sdk": "workspace:*",
     "zod": "^3.24.2"
   },
   "devDependencies": {

@@ -42,7 +42,7 @@ conecta con tu código, tu API, tu base de datos o lo que sea.
 ## 3. El manifiesto (`PluginManifest`)
 
 ```ts
-import { createPlugin } from "@motor-agentico/plugin-sdk";
+import { createPlugin } from "motor-agentico-plugin-sdk";
 
 export default createPlugin({
   id: "porra-mundial-2026",          // único, kebab-case, inmutable
