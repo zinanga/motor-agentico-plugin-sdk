@@ -7,6 +7,10 @@ Convierte el patrón de integración hecho a mano (la Porra: `use-porra.ts` + ru
 sidebar + localStorage) en una **zona de plugins estandarizada**: manifiesto común,
 registro, gestor on/off, y un MCP que scaffolda plugins nuevos en segundos.
 
+> 🟢 **¿No eres muy técnico / te pierdes con la jerga?** Empieza por
+> **[EXPLICADO EN CRISTIANO](docs/EXPLICADO-EN-CRISTIANO.md)** — qué es esto, con
+> metáforas y un glosario. El resto de docs: [estado y decisiones](docs/ESTADO-Y-DECISIONES.md).
+
 ---
 
 ## Qué hay aquí
