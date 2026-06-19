@@ -70,6 +70,10 @@ async function listModels(): Promise<ModelInfo[]> {
   if (ANTHROPIC_KEY) {
     out.push({ id: "claude-sonnet-4-6", provider: "anthropic", local: false, label: "claude-sonnet-4-6 · nube (anthropic)" });
   }
+  // Codex = ChatGPT vía OAuth (login local de Codex). Sin key.
+  if (Bun.which("codex")) {
+    out.push({ id: "codex", provider: "codex", local: false, label: "ChatGPT (OAuth) · codex" });
+  }
   return out;
 }
 
@@ -77,6 +81,32 @@ async function complete(input: { model: string; prompt?: string; messages?: Msg[
   const model = input.model;
   const messages: Msg[] = input.messages ?? [{ role: "user", content: String(input.prompt ?? "") }];
   const maxTokens = Number(input.max_tokens ?? 2048); // holgura para modelos de razonamiento
+
+  // Codex (ChatGPT vía OAuth): shell-out a `codex exec`. Usa el login LOCAL de
+  // Codex de cada máquina — NINGUNA credencial viaja ni va embebida. Sin API key.
+  if (input.provider === "codex" || model === "codex") {
+    const bin = Bun.which("codex");
+    if (!bin) throw new Error("codex CLI no encontrado. Instálalo y haz `codex login` (ChatGPT OAuth).");
+    const flat = messages.map((m) => m.content).join("\n\n");
+    const outFile = `/tmp/codex-out-${Date.now()}-${Math.round(performance.now())}.txt`;
+    const args = ["exec", "--skip-git-repo-check", "-C", "/tmp", "-o", outFile];
+    if (input.model && input.model !== "codex") args.push("-m", input.model);
+    args.push(flat);
+    const proc = Bun.spawn([bin, ...args], { stdout: "pipe", stderr: "pipe" });
+    await proc.exited;
+    let text = "";
+    try {
+      text = (await Bun.file(outFile).text()).trim();
+    } catch {
+      /* sin archivo de salida */
+    }
+    if (!text) text = (await new Response(proc.stdout).text()).trim();
+    if (!text) {
+      const err = (await new Response(proc.stderr).text()).slice(0, 300);
+      throw new Error("codex no devolvió texto. " + err);
+    }
+    return { text, model: "codex", provider: "codex" };
+  }
 
   // Anthropic: API propia (no OpenAI-compat).
   if (input.provider === "anthropic" || /^claude/i.test(model)) {
