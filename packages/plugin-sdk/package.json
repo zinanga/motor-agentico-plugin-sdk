@@ -1,6 +1,6 @@
 {
   "name": "motor-agentico-plugin-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "SDK estándar para construir plugins del Motor Agéntico (manifiesto, registry, hooks).",
   "type": "module",
   "license": "MIT",

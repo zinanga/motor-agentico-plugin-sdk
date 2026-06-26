@@ -10,16 +10,24 @@ import { useCallback, useSyncExternalStore } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   allPlugins,
+  clearBackup,
+  getBackup,
   getConfig,
   getPlugin,
+  importBackup,
   install,
   isActive,
   isEnabled,
   isInstalled,
+  isModuleEnabled,
   pluginDataUrl,
+  restoreLayer,
   setConfig,
   setEnabled,
+  setModuleEnabled,
   uninstall,
+  uninstallLayer,
+  type LayerBackup,
 } from "./registry";
 
 // Re-render cuando cambia localStorage (otra pestaña o este mismo Motor).
@@ -36,6 +44,55 @@ function emitChange() {
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event("motor-plugin:change"));
   }
+}
+
+/**
+ * Estado reactivo del interruptor general de la capa + acción de toggle.
+ * `setEnabled` solo voltea el flag y emite el cambio; revertir/re-aplicar los
+ * skins (side-effect en el DOM) es responsabilidad del Motor (no del SDK), que
+ * reacciona a `enabled` desde el root. SSR: encendido por defecto.
+ */
+export function usePluginsModule() {
+  const enabled = useSyncExternalStore(subscribe, () => isModuleEnabled(), () => true);
+  return {
+    enabled,
+    setEnabled: useCallback((v: boolean) => {
+      setModuleEnabled(v);
+      emitChange();
+    }, []),
+  };
+}
+
+/**
+ * Gestión de toda la capa: desinstalar (limpia + respalda) y recuperar el
+ * respaldo (restaurar / descartar / importar). `backup` es reactivo: la UI lo
+ * muestra cuando existe y ofrece los botones de recuperación. Las acciones
+ * devuelven el estado para que el llamador pueda, p.ej., descargar el .json.
+ */
+export function usePluginLayer() {
+  const savedAt = useSyncExternalStore(subscribe, () => getBackup()?.savedAt ?? "", () => "");
+  const backup = savedAt ? getBackup() : null;
+  return {
+    backup,
+    uninstall: useCallback((): LayerBackup => {
+      const b = uninstallLayer();
+      emitChange();
+      return b;
+    }, []),
+    restore: useCallback(() => {
+      restoreLayer();
+      emitChange();
+    }, []),
+    discardBackup: useCallback(() => {
+      clearBackup();
+      emitChange();
+    }, []),
+    importBackup: useCallback((b: LayerBackup): boolean => {
+      const ok = importBackup(b);
+      emitChange();
+      return ok;
+    }, []),
+  };
 }
 
 /** Estado reactivo de un plugin concreto + acciones. */

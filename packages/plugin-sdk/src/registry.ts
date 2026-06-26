@@ -12,6 +12,15 @@ import type { PluginManifest } from "./manifest";
 const NS = "motor-plugin";
 const key = (id: string, k: string) => `${NS}:${id}:${k}`;
 
+// Interruptor general de TODA la capa de plugins. Vive en una clave propia
+// (`motor-plugin:_module:enabled`) que NO colisiona con ningún plugin (ningún id
+// es "_module"). Por tanto apagar/encender la capa NO toca el estado individual
+// (installed/enabled/config) de cada plugin → al re-encender todo vuelve EXACTO.
+// Ausente = encendido (igual convención que isEnabled).
+const MODULE_ID = "_module";
+// Clave del respaldo de la capa (lo crea "Desinstalar capa"). No es un plugin.
+const BACKUP_ID = "_backup";
+
 // --- almacenamiento seguro (no peta en SSR / storage bloqueado) ---
 function read(k: string): string | null {
   try {
@@ -66,6 +75,105 @@ export function allPlugins(): PluginDefinition[] {
   );
 }
 
+// --- interruptor general de la capa ---
+/** ¿Está encendida la capa de plugins? Ausente = sí. */
+export function isModuleEnabled(): boolean {
+  return read(key(MODULE_ID, "enabled")) !== "false";
+}
+
+/** Enciende/apaga TODA la capa. No toca el estado individual de los plugins. */
+export function setModuleEnabled(enabled: boolean): void {
+  write(key(MODULE_ID, "enabled"), enabled ? "true" : "false");
+}
+
+// --- desinstalar la capa + respaldo (undo) ---
+/** Estructura del respaldo. `keys` mapea clave→valor crudo de localStorage. */
+export interface LayerBackup {
+  version: number;
+  savedAt: string; // ISO
+  keys: Record<string, string>;
+}
+
+const backupKey = () => key(BACKUP_ID, "data");
+
+/** Enumera todas las claves de la capa presentes en localStorage. */
+function enumerateLayerKeys(): string[] {
+  const out: string[] = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(`${NS}:`)) out.push(k);
+    }
+  } catch {
+    /* SSR / storage bloqueado */
+  }
+  return out;
+}
+
+/** Respaldo actual (o null). Para que la UI lo muestre y ofrezca restaurar. */
+export function getBackup(): LayerBackup | null {
+  const raw = read(backupKey());
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as LayerBackup;
+  } catch {
+    return null;
+  }
+}
+
+/** Descarta el respaldo. */
+export function clearBackup(): void {
+  del(backupKey());
+}
+
+/**
+ * Desinstala la capa: respalda TODAS las claves del usuario (`motor-plugin:*`,
+ * menos el propio respaldo) y luego las limpia → estado de fábrica. Devuelve el
+ * respaldo creado. Seguro: persiste el respaldo ANTES de borrar y verifica que
+ * quedó escrito; si no, no borra nada (no se pierde estado).
+ */
+export function uninstallLayer(): LayerBackup {
+  const keys: Record<string, string> = {};
+  for (const k of enumerateLayerKeys()) {
+    if (k === backupKey()) continue; // no respaldar el respaldo
+    const v = read(k);
+    if (v !== null) keys[k] = v;
+  }
+  const backup: LayerBackup = { version: 1, savedAt: new Date().toISOString(), keys };
+  write(backupKey(), JSON.stringify(backup));
+  if (read(backupKey())) {
+    for (const k of Object.keys(keys)) del(k); // respaldo confirmado → limpiar
+  }
+  return backup;
+}
+
+/** Reescribe las claves de la capa desde un respaldo (overwrite 1:1 exacto). */
+function applyBackupKeys(keys: Record<string, string>): void {
+  for (const k of enumerateLayerKeys()) {
+    if (k === backupKey()) continue;
+    del(k); // limpia el estado actual para un 1:1 exacto
+  }
+  for (const [k, v] of Object.entries(keys)) {
+    if (typeof k === "string" && k.startsWith(`${NS}:`) && typeof v === "string") write(k, v);
+  }
+}
+
+/** Restaura desde el respaldo guardado y lo borra. false si no había respaldo. */
+export function restoreLayer(): boolean {
+  const backup = getBackup();
+  if (!backup) return false;
+  applyBackupKeys(backup.keys);
+  del(backupKey());
+  return true;
+}
+
+/** Importa un respaldo (objeto de un archivo .json) y lo aplica. */
+export function importBackup(backup: LayerBackup): boolean {
+  if (!backup || typeof backup !== "object" || !backup.keys) return false;
+  applyBackupKeys(backup.keys);
+  return true;
+}
+
 // --- estado por plugin ---
 export function isInstalled(id: string): boolean {
   return read(key(id, "installed")) === "true";
@@ -107,6 +215,7 @@ export function uninstall(id: string): void {
  * (Equivalente a isPorraConfigured() pero genérico.)
  */
 export function isActive(id: string): boolean {
+  if (!isModuleEnabled()) return false; // interruptor general: apaga toda la capa
   if (!isInstalled(id) || !isEnabled(id)) return false;
   return hasRequiredConfig(id);
 }
